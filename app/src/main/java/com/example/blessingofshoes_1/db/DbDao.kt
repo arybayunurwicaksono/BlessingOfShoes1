@@ -44,6 +44,9 @@ interface DbDao {
     @Update
     fun updateProductItem(data: Product)
 
-    @Query("DELETE FROM product")
-    fun deleteProduct()
+    @Delete
+    fun deleteProductItem(data: Product)
+
+    @Query("DELETE FROM product WHERE idProduct LIKE :idProduct")
+    fun deleteProduct(idProduct: Int?)
 }

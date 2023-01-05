@@ -47,11 +47,19 @@ class AppRepository @Inject constructor(application: Application) {
     fun readUsername(email: String): String = mDbDao.readUsername(email)
     //fun readProductName(idProduct: Int): Product = mDbDao.readProductName(idProduct)
     fun readProductItem(idProduct: Int?): LiveData<Product> = mDbDao.readProductItem(idProduct)
-    fun deleteProduct() = mDbDao.deleteProduct()
+    fun deleteProduct(idProduct: Int?) = mDbDao.deleteProduct(idProduct)
     fun updateProductItem(data:Product) {
         CoroutineScope(Dispatchers.Main).launch {
             mDbDao.updateProductItem(data)
         }
+    }
+/*    fun deleteProductItem(data:Product) {
+        CoroutineScope(Dispatchers.Main).launch {
+            mDbDao.deleteProductItem(data)
+        }
+    }*/
+    fun delete(product: Product) = executeThread {
+        mDbDao.deleteProductItem(product)
     }
 
 

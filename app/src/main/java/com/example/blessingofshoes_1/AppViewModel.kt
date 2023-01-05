@@ -14,6 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AppViewModel@Inject constructor(application: Application): ViewModel() {
 
+    private lateinit var product: Product
     private val appRepository: AppRepository = AppRepository(application)
     val _productItem = MutableLiveData<List<Product>>()
     val productItem: LiveData<List<Product>> = _productItem
@@ -43,10 +44,17 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
     //fun readProductName(idProduct: Int): Product = appRepository.readProductName(idProduct)
 
     fun readProductItem(idProduct: Int?): LiveData<Product> = appRepository.readProductItem(idProduct)
-    fun deleteProduct() = appRepository.deleteProduct()
+    fun deleteProduct(idProduct: Int?) = appRepository.deleteProduct(idProduct)
     fun updateProductItem(context: Context, idProduct:Int, nameProduct:String, priceProduct:String,stockProduct:String, productPhoto: Bitmap, onSuccess: (Boolean) -> Unit) {
         appRepository.updateProductItem(Product(idProduct, nameProduct, priceProduct, stockProduct, productPhoto))
         onSuccess(true)
     }
-
+    /*fun deleteProductItem(context: Context?, data:Product, onSuccess: (Boolean) -> Unit) {
+        appRepository.deleteProductItem(data)
+        onSuccess(true)
+    }*/
+    fun delete(product: Product) {
+        appRepository.delete(product)
+    }
+    fun getData(): Product = product
 }

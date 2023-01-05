@@ -1,5 +1,10 @@
 package com.example.blessingofshoes_1
 
+import java.util.concurrent.Executors
+
+
+private val SINGLE_EXECUTOR = Executors.newSingleThreadExecutor()
+
 class Constant {
 
     companion object {
@@ -9,4 +14,7 @@ class Constant {
         val PREF_PASSWORD = "PREF_PASSWORD"
     }
 
+}
+fun executeThread(f: () -> Unit) {
+    SINGLE_EXECUTOR.execute(f)
 }
