@@ -3,15 +3,15 @@
     <item
         android:id="@+id/productFragment"
         android:icon="@drawable/ic_baseline_favorite_24"
-        android:title="Produk" />
+        android:title="Product" />
     <item
-        android:id="@+id/transaksiFragment"
+        android:id="@+id/cartFragment"
         android:icon="@drawable/ic_baseline_add_shopping_cart_24"
-        android:title="Transaksi" />
+        android:title="Cart" />
     <item
-        android:id="@+id/laporanFragment"
+        android:id="@+id/reportFragment"
         android:icon="@drawable/ic_baseline_list_alt_24"
-        android:title="Laporan" />
+        android:title="Report" />
     <item
         android:id="@+id/aboutFragment"
         android:icon="@drawable/ic_baseline_info_24"

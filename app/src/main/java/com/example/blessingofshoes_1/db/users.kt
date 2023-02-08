@@ -1,5 +1,6 @@
 package com.example.blessingofshoes_1.db
 
+import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -24,6 +25,13 @@ data class Users(
     var email: String? = null,
 
     @ColumnInfo(name = "password")
-    var password: String? = null
+    var password: String? = null,
 
-    ) : Parcelable
+    @ColumnInfo(name = "role")
+    var role: String? = null,
+
+    @ColumnInfo(name = "photoUser")
+    var photoUser: Bitmap
+
+
+) : Parcelable

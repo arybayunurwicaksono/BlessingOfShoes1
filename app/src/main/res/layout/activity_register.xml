@@ -39,6 +39,7 @@
 
                 <ImageView
                     android:layout_width="match_parent"
+                    android:id="@+id/imageView"
                     android:layout_height="match_parent"
                     android:background="@drawable/circle_shape_white"
                     android:padding="25dp"

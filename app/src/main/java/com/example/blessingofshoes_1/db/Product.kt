@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "product")
-data class Product(
+data class  Product(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "idProduct")
@@ -18,13 +18,34 @@ data class Product(
     @ColumnInfo(name = "nameProduct")
     var nameProduct: String? = null,
 
+    @ColumnInfo(name = "brandProduct")
+    var brandProduct: String? = null,
+
     @ColumnInfo(name = "priceProduct")
-    var priceProduct: String? = null,
+    var priceProduct: Int? = null,
 
     @ColumnInfo(name = "stockProduct")
-    var stockProduct: String? = null,
+    var stockProduct: Int? = null,
+
+    @ColumnInfo(name = "sizeProduct")
+    var sizeProduct: String? = null,
+
+    @ColumnInfo(name = "realPriceProduct")
+    var realPriceProduct: Int? = null,
+
+    @ColumnInfo(name = "totalPurchases")
+    var totalPurchases: Int? = null,
+
+    @ColumnInfo(name = "profitProduct")
+    var profitProduct: Int? = 0,
 
     @ColumnInfo(name = "productPhoto")
-    val productPhoto: Bitmap
+    val productPhoto: Bitmap,
+
+    @ColumnInfo(name = "username")
+    var username: String? = null,
+
+    @ColumnInfo(name = "timeAdded")
+    var timeAdded: String? = null
 
     ) : Parcelable

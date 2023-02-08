@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/first_fragment">
+
+<!--    <action
+        android:id="@+id/action_global_test"
+        app:destination="@id/second_fragment"
+        app:launchSingleTop="false"
+        app:popUpTo="@+id/mobile_navigation"
+        app:popUpToInclusive="true" />-->
+
+<!--    <fragment
+        android:id="@+id/first_fragment"
+        android:name="com.grappim.myapplication.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />-->
+
+<!--    <fragment
+        android:id="@+id/second_fragment"
+        android:name="com.grappim.myapplication.ui.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_dashboard" />-->
+
+</navigation>

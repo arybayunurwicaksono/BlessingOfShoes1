@@ -3,10 +3,12 @@ package com.example.blessingofshoes_1
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.example.blessingofshoes_1.authentication.RegisterActivity
 import com.example.blessingofshoes_1.databinding.FragmentProductBinding
 import com.example.blessingofshoes_1.db.AppDb
@@ -30,7 +33,7 @@ class ProductFragment : Fragment() {
     private lateinit var productAdapter: ProductAdapter
     private val viewModel by viewModels<AppViewModel>()
     lateinit var productList: ArrayList<Product>
-    lateinit var productItem: Product
+    lateinit var productListData: List<Product>
     private lateinit var ProductListItem: RecyclerView
     private val appDatabase by lazy { AppDb.getDatabase(requireContext()).dbDao() }
     private lateinit var recyclerViewProduct: RecyclerView
@@ -40,6 +43,12 @@ class ProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_product, container, false)
+
+        var btnAdd = view.findViewById<FloatingActionButton>(R.id.btn_add)
+        btnAdd.setOnClickListener{
+            val intent = Intent(requireContext(), AddProductActivity::class.java)
+            startActivity(intent)
+        }
         return view
     }
 
@@ -48,11 +57,7 @@ class ProductFragment : Fragment() {
 
 
 
-        viewModel.getAllProduct().observe(viewLifecycleOwner) { itemList ->
-            if (itemList != null) {
-                productAdapter.setProductData(itemList)
-            }
-        }
+        observeNotes()
         productList = ArrayList()
        // val btnAdd: FloatingActionButton = requireView().findViewById(R.id.btn_add)
         //btnAdd.setOnClickListener{
@@ -71,6 +76,17 @@ class ProductFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerViewProduct)
     }
 
+    private fun observeNotes() {
+        lifecycleScope.launch {
+            viewModel.getAllProduct().observe(viewLifecycleOwner) { itemList ->
+                if (itemList != null) {
+                    productListData = itemList
+                    productAdapter.setProductData(itemList)
+                }
+            }
+        }
+    }
+
     private fun rvProduct() {
         recyclerViewProduct = requireView().findViewById(R.id.rv_product)
         productAdapter = ProductAdapter(context, productList)
@@ -79,18 +95,19 @@ class ProductFragment : Fragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = productAdapter
         }
-        /*productAdapter.setOnItemClickCallback(object : ProductAdapter.OnItemClickCallback {
+        productAdapter.setOnItemClickCallback(object : ProductAdapter.OnItemClickCallback {
             override fun onItemClicked(data: Product) {
                 showSelectedItem(data)
-                //val intentToDetail = Intent(context, EditProductActivity::class.java)
-                //intentToDetail.putExtra("DATA", data)
-                //intentToDetail.putExtra("DATA_NAME", data.nameProduct)
+                val intentToDetail = Intent(context, EditProductActivity::class.java)
+                intentToDetail.putExtra("DATA", data)
+                intentToDetail.putExtra("DATA_ID", data.idProduct)
+                intentToDetail.putExtra("DATA_NAME", data.nameProduct)
 //                intentToDetail.putExtra("DATA_PRICE", data.priceProduct)
 //                intentToDetail.putExtra("DATA_STOCK", data.stockProduct)
                 //intentToDetail.putExtra("DATA_PHOTO", data.productPhoto)
-                //startActivity(intentToDetail)
+                startActivity(intentToDetail)
             }
-        })*/
+        })
 
     }
 
@@ -124,10 +141,49 @@ class ProductFragment : Fragment() {
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            val data = productList.toMutableList().get(direction)
+            val position = viewHolder.adapterPosition
+            val data = productListData[position]
+            val data2 = productListData[position]
+            //Toast.makeText(context, "Berhasil Menghapus : " + data.nameProduct, Toast.LENGTH_LONG).show()
+            /*Snackbar.make(requireView(), "Deleted " + data.nameProduct, Snackbar.LENGTH_LONG)
+                .setAction(
+                    "Undo",
+                    View.OnClickListener {
+                        // adding on click listener to our action of snack bar.
+                        // below line is to add our item to array list with a position.
+                        viewModel.insertProduct(data2)
+                        viewModel.getAllProduct().observe(viewLifecycleOwner) { itemList ->
+                            if (itemList != null) {
+                                productListData = itemList
+                                productAdapter.setProductData(itemList)
+                            }
+                        }
+                        // below line is to notify item is
+                        // added to our adapter class.
+                        productAdapter.notifyItemInserted(position)
 
-            Toast.makeText(context, "Nama Produk : " + data.nameProduct, Toast.LENGTH_LONG).show()
-            viewModel.delete(Product(data.idProduct, data.nameProduct, data.priceProduct, data.stockProduct, data.productPhoto))
+                    }).show()*/
+
+
+            SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                .setTitleText("Delete this "+ data.nameProduct.toString() + "?")
+                .setContentText("You cannot undo this event!")
+                .setCustomImage(R.drawable.logo_round)
+                .setConfirmText("Ok")
+                .setConfirmClickListener { sDialog ->
+                    viewModel.deleteProduct(data.idProduct)
+                    sDialog.dismissWithAnimation()
+                }
+                .setCancelText("Cancel")
+                .setCancelClickListener { pDialog ->
+                    viewModel.insertProduct(data2)
+                    observeNotes()
+                    pDialog.dismissWithAnimation()
+                }
+                .show()
         }
+
+
+
     }
 }

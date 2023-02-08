@@ -5,6 +5,13 @@
     android:id="@+id/bottom_nav"
     app:startDestination="@id/productFragment">
 
+    <action
+        android:id="@+id/action_global_test"
+        app:destination="@id/cartFragment"
+        app:launchSingleTop="false"
+        app:popUpTo="@+id/bottom_nav"
+        app:popUpToInclusive="true" />
+
     <fragment
         android:id="@+id/productFragment"
         android:name="com.example.blessingofshoes_1.ProductFragment"
@@ -16,8 +23,24 @@
         android:label="fragment_product"
         tools:layout="@layout/fragment_product" />
     <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.blessingofshoes_1.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/reportFragment"
+        android:name="com.example.blessingofshoes_1.ReportFragment"
+        android:label="fragment_report"
+        tools:layout="@layout/fragment_report" />
+    <fragment
         android:id="@+id/aboutFragment"
         android:name="com.example.blessingofshoes_1.AboutFragment"
+        android:label="fragment_about"
+        tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/detailProductFragment"
+        android:name="com.example.blessingofshoes_1.DetailProductFragment"
         android:label="fragment_about"
         tools:layout="@layout/fragment_about" />
 </navigation>

@@ -23,6 +23,10 @@ class Preferences(context: Context) {
             .apply()
     }
 
+/*    fun getLoggedInUser(context: Context?): String? {
+        return sharedPref.getString()
+    }*/
+
     fun getBoolean(key: String): Boolean {
         return sharedPref.getBoolean(key, false)
     }

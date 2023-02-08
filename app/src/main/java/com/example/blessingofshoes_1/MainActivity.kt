@@ -9,15 +9,22 @@ import android.view.MenuItem
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.blessingofshoes_1.databinding.ActivityDetailProductBinding
+import com.example.blessingofshoes_1.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(){
+
+    private lateinit var _activityMainBinding: ActivityMainBinding
+    private val binding get() = _activityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
+        _activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        getSupportActionBar()?.hide()
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         val navController = findNavController(R.id.nav_fragment)
         bottomNavigationView.setupWithNavController(navController)

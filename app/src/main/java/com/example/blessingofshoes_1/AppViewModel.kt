@@ -6,9 +6,9 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.blessingofshoes_1.db.Product
-import com.example.blessingofshoes_1.db.Users
+import com.example.blessingofshoes_1.db.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,26 +29,96 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
 
     fun getUserInfo(email: String): Users = appRepository.getUserInfo(email)
 
-    fun readUsername(email: String): String = appRepository.readUsername(email)
-
+    fun readUsername(email: String?): String = appRepository.readUsername(email)
+    fun checkTransaction(): Int? = appRepository.checkTransaction()
+    fun checkCart(): Int? = appRepository.checkCart()
+/*    fun readCart(): ArrayList<Cart> = appRepository.readCart()*/
     fun getAllProduct(): LiveData<kotlin.collections.List<Product>> = appRepository.getAllProduct()
+    fun getAllTransaction(): LiveData<kotlin.collections.List<Transaction>> = appRepository.getAllTransaction()
+    fun getAllCartItem(): Flow<List<Cart>> = appRepository.getAllCartItem()
 
     fun insertProduct(product: Product) {
         appRepository.insertProduct(product)
     }
-
-    fun updateProduct(idProduct: Int?, nameProduct:String, priceProduct:String, stockProduct:String, productPhoto: Bitmap) {
-        appRepository.updateProduct(idProduct, nameProduct, priceProduct, stockProduct, productPhoto)
+    fun insertBalance(balance: Balance) {
+        appRepository.insertBalance(balance)
     }
+    fun insertBalanceReport(balanceReport: BalanceReport) {
+        appRepository.insertBalanceReport(balanceReport)
+    }
+    fun insertRestock(restock: Restock) {
+        appRepository.insertRestock(restock)
+    }
+
+    fun insertCart(cart: Cart) {
+        appRepository.insertCart(cart)
+    }
+    fun insertTransaction(transaction: Transaction) {
+        appRepository.insertTransaction(transaction)
+    }
+
+/*    fun updateProduct(idProduct: Int, nameProduct:String, priceProduct:String, stockProduct:String, productPhoto: Bitmap) {
+        appRepository.updateProduct(idProduct, nameProduct, priceProduct, stockProduct, productPhoto)
+    }*/
 
     //fun readProductName(idProduct: Int): Product = appRepository.readProductName(idProduct)
-
+    fun sumTotalPayment() : Int? = appRepository.sumTotalPayment()
+    fun sumTotalProfit() : Int? = appRepository.sumTotalProfit()
+    fun sumTotalTransaction() : Int? = appRepository.sumTotalTransaction()
+    fun sumTotalCompleteProfit() : Int? = appRepository.sumTotalCompleteProfit()
+    fun sumStockItem(idProduct: Int?, totalItem: Int?) = appRepository.sumStockItem(idProduct, totalItem)
+    fun sumTotalPurchasesItem(idProduct: Int?, totalPurchases: Int?) = appRepository.sumTotalPurchasesItem(idProduct, totalPurchases)
+    fun sumCancelableStockItem(idProduct: Int?, totalItem: Int?) = appRepository.sumCancelableStockItem(idProduct, totalItem)
+    fun sumCancelableTotalPurchasesItem(idProduct: Int?, totalPurchases: Int?) = appRepository.sumCancelableTotalPurchasesItem(idProduct, totalPurchases)
+    fun sumOldRealPrice(idProduct: Int?) : Int? = appRepository.sumOldRealPrice(idProduct)
     fun readProductItem(idProduct: Int?): LiveData<Product> = appRepository.readProductItem(idProduct)
+    fun readTransactionById(idTransaction: Int?): LiveData<Transaction> = appRepository.readTransactionById(idTransaction)
+    fun readDigitalBalance(): Int? = appRepository.readDigitalBalance()
     fun deleteProduct(idProduct: Int?) = appRepository.deleteProduct(idProduct)
-    fun updateProductItem(context: Context, idProduct:Int, nameProduct:String, priceProduct:String,stockProduct:String, productPhoto: Bitmap, onSuccess: (Boolean) -> Unit) {
-        appRepository.updateProductItem(Product(idProduct, nameProduct, priceProduct, stockProduct, productPhoto))
+    fun deleteCart(idCart: Int?) = appRepository.deleteCart(idCart)
+    fun deleteTransaction(idTransaction: Int?) = appRepository.deleteTransaction(idTransaction)
+    fun updateProductItem(context: Context, idProduct:Int, nameProduct:String, brandProduct:String,
+                          priceProduct:Int,stockProduct:Int, sizeProduct:String, realPriceProduct:Int, totalPurchases:Int,
+                          profitProduct:Int, productPhoto: Bitmap, username: String, timeAdded:String,
+                          onSuccess: (Boolean) -> Unit) {
+        appRepository.updateProductItem(Product(idProduct, nameProduct, brandProduct,
+            priceProduct, stockProduct, sizeProduct, realPriceProduct, totalPurchases, profitProduct, productPhoto, username, timeAdded))
         onSuccess(true)
     }
+
+    fun updateCartStatus(context: Context, status: String?,
+                          onSuccess: (Boolean) -> Unit) {
+        appRepository.updateCartStatus(status)
+        onSuccess(true)
+    }
+
+    fun updateCashBalance(context: Context, cashValue: Int?,
+                         onSuccess: (Boolean) -> Unit) {
+        appRepository.updateCashBalance(cashValue)
+        onSuccess(true)
+    }
+
+    fun updateDigitalBalance(context: Context, digitalValue: Int?,
+                         onSuccess: (Boolean) -> Unit) {
+        appRepository.updateDigitalBalance(digitalValue)
+        onSuccess(true)
+    }
+    fun updateCartIdTransaction(context: Context, idItem: Int?,
+                         onSuccess: (Boolean) -> Unit) {
+        appRepository.updateCartIdTransaction(idItem)
+        onSuccess(true)
+    }
+    fun updateCashOutBalance(context: Context, total: Int?,
+                                onSuccess: (Boolean) -> Unit) {
+        appRepository.updateCashOutBalance(total)
+        onSuccess(true)
+    }
+    fun updateDigitalOutBalance(context: Context, total: Int?,
+                                onSuccess: (Boolean) -> Unit) {
+        appRepository.updateDigitalOutBalance(total)
+        onSuccess(true)
+    }
+
     /*fun deleteProductItem(context: Context?, data:Product, onSuccess: (Boolean) -> Unit) {
         appRepository.deleteProductItem(data)
         onSuccess(true)
@@ -57,4 +127,7 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
         appRepository.delete(product)
     }
     fun getData(): Product = product
+
+    fun readLastTransaction(): Int? = appRepository.readLastTransaction()
+    fun readLastProduct(): Int? = appRepository.readLastProduct()
 }
