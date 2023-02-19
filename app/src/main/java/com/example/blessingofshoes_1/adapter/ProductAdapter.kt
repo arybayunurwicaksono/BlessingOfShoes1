@@ -1,7 +1,5 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.adapter
 
-import android.app.Activity
-import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.transition.AutoTransition
@@ -9,17 +7,15 @@ import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.util.Pair
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
-import com.example.blessingofshoes_1.databinding.ItemProductBinding
+import com.example.blessingofshoes_1.viemodel.AppViewModel
+import com.example.blessingofshoes_1.EditProductActivity
+import com.example.blessingofshoes_1.R
+import com.example.blessingofshoes_1.RestockActivity
 import com.example.blessingofshoes_1.databinding.ItemProductSecondBinding
 import com.example.blessingofshoes_1.db.Product
-import com.google.android.material.snackbar.Snackbar
 import java.text.NumberFormat
 import java.util.*
 

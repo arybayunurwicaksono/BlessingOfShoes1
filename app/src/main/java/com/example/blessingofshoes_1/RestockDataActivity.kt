@@ -6,10 +6,12 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.blessingofshoes_1.adapter.RestockDataAdapter
 import com.example.blessingofshoes_1.databinding.ActivityRestockDataBinding
 import com.example.blessingofshoes_1.db.AppDb
-import com.example.blessingofshoes_1.db.Cart
 import com.example.blessingofshoes_1.db.Restock
+import com.example.blessingofshoes_1.utils.Preferences
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.ArrayList

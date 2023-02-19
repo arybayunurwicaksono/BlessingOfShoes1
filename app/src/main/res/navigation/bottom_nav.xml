@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_nav"
-    app:startDestination="@id/productFragment">
+    app:startDestination="@id/aboutFragment">
 
     <action
         android:id="@+id/action_global_test"
@@ -16,7 +16,11 @@
         android:id="@+id/productFragment"
         android:name="com.example.blessingofshoes_1.ProductFragment"
         android:label="fragment_product"
-        tools:layout="@layout/fragment_product" />
+        tools:layout="@layout/fragment_product" >
+        <action
+            android:id="@+id/action_productFragment_to_add_product_fragment"
+            app:destination="@id/add_product_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/addProductFragment"
         android:name="com.example.blessingofshoes_1.AddProductFragment"
@@ -36,11 +40,46 @@
         android:id="@+id/aboutFragment"
         android:name="com.example.blessingofshoes_1.AboutFragment"
         android:label="fragment_about"
-        tools:layout="@layout/fragment_about" />
+        tools:layout="@layout/fragment_about" >
+        <action
+            android:id="@+id/action_aboutFragment_to_financialAccountingFragment"
+            app:destination="@id/financialAccountingFragment" />
+    </fragment>
 
     <fragment
+        android:id="@+id/add_product_fragment"
+        android:name="com.example.blessingofshoes_1.AddProductFragment"
+        android:label="@string/add_product"
+        tools:layout="@layout/fragment_add_product" >
+        <action
+            android:id="@+id/action_add_product_fragment_to_productFragment"
+            app:destination="@id/productFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/financialAccountingFragment"
+        android:name="com.example.blessingofshoes_1.FinancialAccountingFragment"
+        android:label="Financial Accounting"
+        tools:layout="@layout/fragment_financial_accounting">
+        <action
+            android:id="@+id/action_financialAccountingFragment_to_generateAccountingFragment"
+            app:destination="@id/generateAccountingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/generateAccountingFragment"
+        android:name="com.example.blessingofshoes_1.GenerateAccountingFragment"
+        android:label="Generate Accounting"
+        tools:layout="@layout/fragment_generate_accounting"/>
+
+
+
+
+    <!--<fragment
         android:id="@+id/detailProductFragment"
         android:name="com.example.blessingofshoes_1.DetailProductFragment"
         android:label="fragment_about"
-        tools:layout="@layout/fragment_about" />
+        tools:layout="@layout/fragment_about" />-->
+
+
 </navigation>

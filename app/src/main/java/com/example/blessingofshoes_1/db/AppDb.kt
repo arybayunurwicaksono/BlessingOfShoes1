@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.blessingofshoes_1.Converters
+import com.example.blessingofshoes_1.utils.Converters
 
 @TypeConverters(Converters::class)
 @Database(entities =
@@ -19,7 +19,8 @@ import com.example.blessingofshoes_1.Converters
     Restock::class,
     Return::class,
     Balance::class,
-    BalanceReport::class
+    BalanceReport::class,
+    Accounting::class
 ],
     version = 2)
 
@@ -56,6 +57,10 @@ abstract class AppDb : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
             }
         }
+        val MIGRATION_8_9: Migration = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+            }
+        }
         @Volatile
         private var INSTANCE: AppDb? = null
 
@@ -66,7 +71,7 @@ abstract class AppDb : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
                         AppDb::class.java, "app_db")
                         .allowMainThreadQueries()
-                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                         //.fallbackToDestructiveMigration()
                         .build()
                 }

@@ -1,7 +1,6 @@
 package com.example.blessingofshoes_1
 
 import android.Manifest
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -27,7 +26,10 @@ import androidx.lifecycle.lifecycleScope
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils
-import com.example.blessingofshoes_1.db.Product
+import com.example.blessingofshoes_1.utils.Preferences
+import com.example.blessingofshoes_1.utils.createCustomTempFile
+import com.example.blessingofshoes_1.utils.uriToFile
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

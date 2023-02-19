@@ -1,4 +1,4 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -8,21 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.cardview.widget.CardView
-import androidx.core.view.drawToBitmap
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
+import com.example.blessingofshoes_1.DetailProductActivity
+import com.example.blessingofshoes_1.R
+import com.example.blessingofshoes_1.RecyclerClickListener
 import com.example.blessingofshoes_1.databinding.ItemProductCashierBinding
-import com.example.blessingofshoes_1.databinding.ItemProductSecondBinding
-import com.example.blessingofshoes_1.db.Cart
 import com.example.blessingofshoes_1.db.DbDao
 import com.example.blessingofshoes_1.db.Product
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
 
@@ -32,18 +26,15 @@ class CartAdapter (private val context: Context?, private var productItem: List<
     private lateinit var onItemClickCallback: OnItemClickCallback
     private lateinit var mbDao: DbDao
     var total: Int = 0
-    private lateinit var listener: RecyclerClickListener
-    class CartHolder(view: View) : RecyclerView.ViewHolder(view)
-    fun setItemListener(listener: RecyclerClickListener) {
-        this.listener = listener
-    }
+    private val TAG = "CartAdapter"
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
 
         val binding = ItemProductCashierBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        binding.btnAddToCart.setOnClickListener {
-            listener.onItemClick(CartViewHolder(binding).adapterPosition)
-        }
+//        binding.btnAddToCart.setOnClickListener {
+//            listener.onItemClick(CartViewHolder(binding).adapterPosition)
+//        }
 
         return CartViewHolder(binding)
     }
@@ -60,6 +51,7 @@ class CartAdapter (private val context: Context?, private var productItem: List<
             holder.binding.tvProductStock.setTextColor(Color.RED)
         }
         holder.binding.tvTotalPrice.text = "Rp0,00"
+        holder.binding.txtQty.text = "0"
         // Format ke rupiah
         holder.binding.btnAddToCart.text = "Add to Cart"
         val localeID =  Locale("in", "ID")
@@ -109,17 +101,24 @@ class CartAdapter (private val context: Context?, private var productItem: List<
                     .setTitleText("Oops...")
                     .setContentText("Qty Cannot Empty!")
                     .show()
-            } else {
-                val intent = Intent(holder.itemView.context, DetailProductActivity::class.java)
-                intent.putExtra("DATA_ID", listProduct.idProduct)
-                intent.putExtra("DATA_NAME", listProduct!!.nameProduct)
-                intent.putExtra("DATA_PRICE", listProduct!!.priceProduct)
-                intent.putExtra("DATA_TOTAL", totalItem)
-                intent.putExtra("DATA_PROFIT", profitItem)
-                intent.putExtra("DATA_PAYMENT", totalPayment)
+            } else if (holder.binding.txtQty.text.toString().toInt() > 0){
+//                val intent = Intent(holder.itemView.context, DetailProductActivity::class.java)
+//                intent.putExtra("DATA_ID", listProduct.idProduct)
+//                intent.putExtra("DATA_NAME", listProduct!!.nameProduct)
+//                intent.putExtra("DATA_PRICE", listProduct!!.priceProduct)
+//                intent.putExtra("DATA_TOTAL", totalItem)
+//                intent.putExtra("DATA_PROFIT", profitItem)
+//                intent.putExtra("DATA_PAYMENT", totalPayment)
 
-                holder.itemView.context.startActivity(intent)
+//                holder.itemView.context.startActivity(intent)
+                Log.d(TAG, "onBindView Holder: ${holder.binding.txtQty.text}")
+                listener?.onAddClick(listProduct, position, totalItem)
+
+
             }
+        }
+        holder.binding.cvItem.setOnClickListener{
+            holder.binding.cvItem.setBackgroundResource(R.drawable.cv_background_onprogress)
         }
         holder.binding.tvProfitTitle.text = "+"
         holder.binding.tvProductName.text = listProduct!!.nameProduct
@@ -131,6 +130,8 @@ class CartAdapter (private val context: Context?, private var productItem: List<
             .fitCenter()
             .into(holder.binding.imageView)
     }
+
+    var listener: CartClickListener? = null
 
     override fun getItemCount(): Int = productItem.size
 
@@ -149,4 +150,9 @@ class CartAdapter (private val context: Context?, private var productItem: List<
         this.onItemClickCallback = onItemClickCallback
     }
 
+}
+
+interface CartClickListener {
+    //    fun onItemRemoveClick(position: Int)
+    fun onAddClick(product: Product, position: Int, qty: Int)
 }

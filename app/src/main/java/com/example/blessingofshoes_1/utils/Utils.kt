@@ -1,4 +1,4 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.utils
 
 import android.content.ContentResolver
 import android.content.Context

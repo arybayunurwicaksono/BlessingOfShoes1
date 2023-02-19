@@ -1,6 +1,7 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.di
 
 import android.app.Application
+import com.example.blessingofshoes_1.AppRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,8 +1,6 @@
 package com.example.blessingofshoes_1
 
-import android.app.DatePickerDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -17,13 +15,16 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.navigation.fragment.findNavController
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.example.blessingofshoes_1.authentication.LoginActivity
 import com.example.blessingofshoes_1.databinding.FragmentAboutBinding
 import com.example.blessingofshoes_1.db.AppDb
 import com.example.blessingofshoes_1.db.Balance
 import com.example.blessingofshoes_1.db.BalanceReport
-import com.example.blessingofshoes_1.db.Product
+import com.example.blessingofshoes_1.utils.Constant
+import com.example.blessingofshoes_1.utils.Preferences
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -95,14 +96,43 @@ class AboutFragment : Fragment() {
             calenderDialog.show()*/
         }
         val email = sharedPref.getString(Constant.PREF_EMAIL)
-
+        var validateCountBalance = appDatabase.validateCountBalance()!!
+        var validateCountProduct = appDatabase.validateCountProduct()!!
         binding?.apply {
-            AccountBalanceValue.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
-            CashBalanceValue.text = (numberFormat.format(appDatabase.readCashBalance()!!.toDouble()).toString())
+            if (validateCountBalance == 0) {
+                AccountBalanceValue.text = "Rp0,00"
+                CashBalanceValue.text = "Rp0,00"
+            } else {
+                AccountBalanceValue.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
+                CashBalanceValue.text = (numberFormat.format(appDatabase.readCashBalance()!!.toDouble()).toString())
+            }
+            if (validateCountProduct == 0) {
+                StockValue.text = "0"
+                StockWorthValue.text = "Rp0,00"
+            } else {
+                StockValue.text = appDatabase.readTotalStock()!!.toString()
+                StockWorthValue.text = (numberFormat.format(appDatabase.readTotalStockWorth()!!.toDouble()).toString())
+            }
 
-            btnFinancial.setOnClickListener{
+            val sdf = SimpleDateFormat("M/yyyy")
+            val currentDate = sdf.format(Date())
+            var dateSearch = "%"+currentDate+"%"
+            var eCapital = appDatabase.sumTotalInvest(dateSearch)
+            btnEdit.setOnClickListener{
+                Log.d("CapitalTEST", eCapital.toString())
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Month  " + eCapital)
+                    .setConfirmText("OK")
+                    .show()
+            }
+
+
+            balanceReport.setOnClickListener{
                 val intent = Intent(context, FinancialActivity::class.java)
                 startActivity(intent)
+            }
+            btnFinancialAccounting.setOnClickListener{
+                findNavController().navigate(R.id.action_aboutFragment_to_financialAccountingFragment)
             }
 
 
@@ -115,29 +145,31 @@ class AboutFragment : Fragment() {
                     .setCustomImage(R.drawable.logo_round)
                     .setCancelButtonBackgroundColor(R.color.blue_600)
                     .setConfirmClickListener { sDialog ->
+                        sDialog.dismissWithAnimation()
                         typeBalance = "Cash"
                         TransitionManager.beginDelayedTransition(root, AutoTransition())
                         edtTypeBalance.setText(typeBalance)
                         layoutAddBalance.visibility = VISIBLE
-                        sDialog.dismissWithAnimation()
                     }
                     .setCancelClickListener { pDialog ->
+                        pDialog.dismissWithAnimation()
                         typeBalance = "Digital"
                         TransitionManager.beginDelayedTransition(root, AutoTransition())
                         edtTypeBalance.setText(typeBalance)
                         layoutAddBalance.visibility = VISIBLE
-                        pDialog.dismissWithAnimation()
                     }
                     .show()
+
             }
             btnInsertBalance.setOnClickListener {
                 var total = edtTotalBalance.text.toString().toInt()
                 var status = "In"
                 var typeBalance = edtTypeBalance.text.toString()
-                val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
+
                 val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
                 val currentDate = sdf.format(Date())
                 var note = "Capital"
+                val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
                 appDatabase.insertBalanceReport(
                     BalanceReport(
                         0,
@@ -152,28 +184,30 @@ class AboutFragment : Fragment() {
                 if (typeBalance == "Cash") {
 
                         SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Balance Updated")
-                            .setConfirmText("Ok")
+                            .setTitleText("Are you sure to invest?")
+                            .setConfirmText("Yes")
                             .setConfirmClickListener { sDialog ->
                                 appDatabase.updateCashBalance(total)
                                 TransitionManager.beginDelayedTransition(root, AutoTransition())
-                                AccountBalanceValue.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
-                                CashBalanceValue.text = (numberFormat.format(appDatabase.readCashBalance()!!.toDouble()).toString())
+                                    AccountBalanceValue.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
+                                    CashBalanceValue.text = (numberFormat.format(appDatabase.readCashBalance()!!.toDouble()).toString())
                                 layoutAddBalance.visibility = GONE
+                                sDialog.dismissWithAnimation()
                             }
                             .show()
 
                 } else {
 
                         SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Balance Updated")
-                            .setConfirmText("Ok")
+                            .setTitleText("Are you sure to invest?")
+                            .setConfirmText("Yes")
                             .setConfirmClickListener { sDialog ->
                                 appDatabase.updateDigitalBalance(total)
                                 TransitionManager.beginDelayedTransition(root, AutoTransition())
-                                AccountBalanceValue.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
-                                CashBalanceValue.text = (numberFormat.format(appDatabase.readCashBalance()!!.toDouble()).toString())
+                                    AccountBalanceValue.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
+                                    CashBalanceValue.text = (numberFormat.format(appDatabase.readCashBalance()!!.toDouble()).toString())
                                 layoutAddBalance.visibility = GONE
+                                sDialog.dismissWithAnimation()
                             }
                             .show()
 

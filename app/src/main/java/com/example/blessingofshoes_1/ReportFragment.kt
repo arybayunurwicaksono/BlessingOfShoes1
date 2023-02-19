@@ -1,6 +1,5 @@
 package com.example.blessingofshoes_1
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,12 +11,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
-import com.example.blessingofshoes_1.databinding.FragmentProductBinding
+import com.example.blessingofshoes_1.adapter.ReportAdapter
 import com.example.blessingofshoes_1.databinding.FragmentReportBinding
-import com.example.blessingofshoes_1.db.AppDb
 import com.example.blessingofshoes_1.db.Product
 import com.example.blessingofshoes_1.db.Transaction
-import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat

@@ -9,36 +9,38 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.example.blessingofshoes_1.adapter.CartAdapter
+import com.example.blessingofshoes_1.adapter.CartClickListener
 import com.example.blessingofshoes_1.databinding.FragmentCartBinding
-import com.example.blessingofshoes_1.databinding.FragmentProductBinding
+import com.example.blessingofshoes_1.databinding.ItemProductCashierBinding
 import com.example.blessingofshoes_1.db.AppDb
 import com.example.blessingofshoes_1.db.Cart
 import com.example.blessingofshoes_1.db.Product
+import com.example.blessingofshoes_1.utils.Constant
+import com.example.blessingofshoes_1.utils.Preferences
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class CartFragment : Fragment() {
+class CartFragment : Fragment(), CartClickListener {
 
     private var binding: FragmentCartBinding? = null
     private lateinit var cartAdapter: CartAdapter
     private val viewModel by viewModels<AppViewModel>()
     lateinit var productList: ArrayList<Product>
+    lateinit var sharedPref: Preferences
     private val appDatabase by lazy { AppDb.getDatabase(context!!).dbDao() }
     private lateinit var recyclerViewProduct: RecyclerView
+    private val TAG = "CartFragment"
 
 
     override fun onCreateView(
@@ -105,15 +107,51 @@ class CartFragment : Fragment() {
             }
         }
 
+
         productList = ArrayList()
         rvProduct()
         view.findViewById<TextView>(R.id.btn_add_to_cart)
 
     }
 
+    override fun onAddClick(product: Product, position: Int, qty: Int) {
+        Log.d(TAG, "onItemClick: $product")
+
+        var profitItem = product.profitProduct!!.toInt() * qty
+        var totalPayment = (qty * product.priceProduct!!)
+        sharedPref = Preferences(requireContext())
+        val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
+        var extraRealPrice = (product.realPriceProduct)?.toInt()
+        var totalPurchasesFinal = qty * extraRealPrice!!
+
+        viewModel.insertCart(Cart(
+            0,
+            product.idProduct,
+            product.nameProduct,
+            product.priceProduct,
+            qty,
+            product.profitProduct,
+            profitItem,
+            totalPayment,
+            username,
+            "onProgress",
+            0,
+            product.productPhoto
+        ))
+
+        viewModel.sumTotalPurchasesItem(product.idProduct, totalPurchasesFinal)
+        viewModel.sumStockItem( product.idProduct, qty)
+        SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+            .setTitleText("Item Added")
+            .setConfirmText("Ok")
+            .show()
+    }
+
+
     private fun rvProduct() {
         recyclerViewProduct = requireView().findViewById(R.id.rv_product_cart)
         cartAdapter = CartAdapter(context, productList)
+        cartAdapter.listener = this
         recyclerViewProduct.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -157,4 +195,8 @@ class CartFragment : Fragment() {
         super.onDestroyView()
         binding = null
     }
+
+
+
+
 }

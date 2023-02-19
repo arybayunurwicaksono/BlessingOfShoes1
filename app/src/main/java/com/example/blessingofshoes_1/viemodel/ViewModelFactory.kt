@@ -1,4 +1,4 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.viemodel
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

@@ -5,15 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
-import com.example.blessingofshoes_1.Constant
+import com.example.blessingofshoes_1.utils.Constant
 import com.example.blessingofshoes_1.MainActivity
-import com.example.blessingofshoes_1.Preferences
+import com.example.blessingofshoes_1.utils.Preferences
 import com.example.blessingofshoes_1.R
 import com.example.blessingofshoes_1.databinding.ActivityLoginBinding
 import com.example.blessingofshoes_1.db.AppDb
-import com.google.android.material.snackbar.Snackbar
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 class LoginActivity : AppCompatActivity() {
 

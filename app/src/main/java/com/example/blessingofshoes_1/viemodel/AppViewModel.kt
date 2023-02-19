@@ -1,4 +1,4 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.viemodel
 
 import android.app.Application
 import android.content.Context
@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.blessingofshoes_1.AppRepository
 import com.example.blessingofshoes_1.db.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -34,12 +35,18 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
     fun checkCart(): Int? = appRepository.checkCart()
 /*    fun readCart(): ArrayList<Cart> = appRepository.readCart()*/
     fun getAllProduct(): LiveData<kotlin.collections.List<Product>> = appRepository.getAllProduct()
+    fun getAllAccounting(): LiveData<kotlin.collections.List<Accounting>> = appRepository.getAllAccounting()
     fun getAllTransaction(): LiveData<kotlin.collections.List<Transaction>> = appRepository.getAllTransaction()
     fun getAllCartItem(): Flow<List<Cart>> = appRepository.getAllCartItem()
 
     fun insertProduct(product: Product) {
         appRepository.insertProduct(product)
     }
+
+    fun insertAccounting(accounting: Accounting) {
+        appRepository.insertAccounting(accounting)
+    }
+
     fun insertBalance(balance: Balance) {
         appRepository.insertBalance(balance)
     }
@@ -72,9 +79,13 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
     fun sumCancelableTotalPurchasesItem(idProduct: Int?, totalPurchases: Int?) = appRepository.sumCancelableTotalPurchasesItem(idProduct, totalPurchases)
     fun sumOldRealPrice(idProduct: Int?) : Int? = appRepository.sumOldRealPrice(idProduct)
     fun readProductItem(idProduct: Int?): LiveData<Product> = appRepository.readProductItem(idProduct)
+    fun readDetailMonthlyAccounting(time: String?): LiveData<Accounting> = appRepository.readDetailMonthlyAccounting(time)
+
+
     fun readTransactionById(idTransaction: Int?): LiveData<Transaction> = appRepository.readTransactionById(idTransaction)
     fun readDigitalBalance(): Int? = appRepository.readDigitalBalance()
     fun deleteProduct(idProduct: Int?) = appRepository.deleteProduct(idProduct)
+    fun deleteAccounting(idAccounting: Int?) = appRepository.deleteAccounting(idAccounting)
     fun deleteCart(idCart: Int?) = appRepository.deleteCart(idCart)
     fun deleteTransaction(idTransaction: Int?) = appRepository.deleteTransaction(idTransaction)
     fun updateProductItem(context: Context, idProduct:Int, nameProduct:String, brandProduct:String,
@@ -83,6 +94,60 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
                           onSuccess: (Boolean) -> Unit) {
         appRepository.updateProductItem(Product(idProduct, nameProduct, brandProduct,
             priceProduct, stockProduct, sizeProduct, realPriceProduct, totalPurchases, profitProduct, productPhoto, username, timeAdded))
+        onSuccess(true)
+    }
+
+    fun updateMonthlyAccounting(
+        context: Context,
+        idAccounting: Int,
+        dateAccounting: String?,
+        initDigital: Int?,
+        initCash: Int?,
+        initStock: Int?,
+        initWorth: Int?,
+        capitalInvest: Int?,
+        incomeTransaction: Int?,
+        transactionItem: Int?,
+        restockPurchases: Int?,
+        restockItem: Int?,
+        returnTotal: Int?,
+        returnItem: Int?,
+        finalDigital: Int?,
+        finalCash: Int?,
+        finalStock: Int?,
+        finalWorth: Int?,
+        otherNeeds: Int?,
+        username: String,
+        status: String,
+        balanceIn: Int?,
+        balanceOut: Int?,
+        profitEarned: Int?,
+        onSuccess: (Boolean) -> Unit) {
+        appRepository.updateMonthlyAccounting(
+            Accounting(
+                idAccounting,
+                dateAccounting,
+                initDigital,
+                initCash,
+                initStock,
+                initWorth,
+                capitalInvest,
+                incomeTransaction,
+                transactionItem,
+                restockPurchases,
+                restockItem,
+                returnTotal,
+                returnItem,
+                finalDigital,
+                finalCash,
+                finalStock,
+                finalWorth,
+                otherNeeds,
+                username,
+                status,
+                balanceIn,
+                balanceOut,
+                profitEarned))
         onSuccess(true)
     }
 
@@ -129,5 +194,6 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
     fun getData(): Product = product
 
     fun readLastTransaction(): Int? = appRepository.readLastTransaction()
+    fun readTotalTransactionRecord(idTransaction: Int?): Int? = appRepository.readTotalTransactionRecord(idTransaction)
     fun readLastProduct(): Int? = appRepository.readLastProduct()
 }

@@ -1,13 +1,12 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.adapter
 
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Transaction
-import com.bumptech.glide.Glide
-import com.example.blessingofshoes_1.databinding.ItemProductSecondBinding
+import com.example.blessingofshoes_1.viemodel.AppViewModel
+import com.example.blessingofshoes_1.DetailReportActivity
 import com.example.blessingofshoes_1.databinding.ItemReportBinding
 import com.example.blessingofshoes_1.db.Product
 import java.text.NumberFormat

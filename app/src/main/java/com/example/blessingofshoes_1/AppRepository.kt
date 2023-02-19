@@ -3,6 +3,7 @@ package com.example.blessingofshoes_1
 import android.app.Application
 import androidx.lifecycle.LiveData
 import com.example.blessingofshoes_1.db.*
+import com.example.blessingofshoes_1.utils.executeThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,13 @@ class AppRepository @Inject constructor(application: Application) {
     fun insertProduct(product: Product) {
 
         mDbDao.insertProduct(product)
+        //return mDbDao.insertProduct(product)
+
+    }
+
+    fun insertAccounting(accounting: Accounting) {
+
+        mDbDao.insertAccounting(accounting)
         //return mDbDao.insertProduct(product)
 
     }
@@ -76,6 +84,7 @@ class AppRepository @Inject constructor(application: Application) {
 
     fun getUserInfo(email: String): Users = mDbDao.getUserInfo(email)
     fun getAllProduct(): LiveData<List<Product>> = mDbDao.getAllProduct()
+    fun getAllAccounting(): LiveData<List<Accounting>> = mDbDao.getAllAccounting()
     fun getAllTransaction(): LiveData<List<Transaction>> = mDbDao.getAllTransaction()
     fun getAllCartItem(): Flow<List<Cart>> = mDbDao.getAllCartItem()
     fun readUsername(email: String?): String = mDbDao.readUsername(email)
@@ -84,9 +93,13 @@ class AppRepository @Inject constructor(application: Application) {
 /*    fun readCart(): ArrayList<Cart> = mDbDao.readCart()*/
     //fun readProductName(idProduct: Int): Product = mDbDao.readProductName(idProduct)
     fun readProductItem(idProduct: Int?): LiveData<Product> = mDbDao.readProductItem(idProduct)
+    fun readDetailMonthlyAccounting(time: String?): LiveData<Accounting> = mDbDao.readDetailMonthlyAccounting(time)
+
+
     fun readTransactionById(idTransaction: Int?): LiveData<Transaction> = mDbDao.readTransactionById(idTransaction)
     fun readDigitalBalance(): Int? = mDbDao.readDigitalBalance()
     fun deleteProduct(idProduct: Int?) = mDbDao.deleteProduct(idProduct)
+    fun deleteAccounting(idAccounting: Int?) = mDbDao.deleteAccounting(idAccounting)
     fun deleteCart(idItem: Int?) = mDbDao.deleteCart(idItem)
     fun deleteTransaction(idTransaction: Int?) = mDbDao.deleteTransaction(idTransaction)
     fun updateProductItem(data:Product) {
@@ -94,6 +107,13 @@ class AppRepository @Inject constructor(application: Application) {
             mDbDao.updateProductItem(data)
         }
     }
+
+    fun updateMonthlyAccounting(data:Accounting) {
+        CoroutineScope(Dispatchers.Main).launch {
+            mDbDao.updateMonthlyAccounting(data)
+        }
+    }
+
     fun updateCartStatus(status:String?) {
         CoroutineScope(Dispatchers.Main).launch {
             mDbDao.updateCartStatus(status)
@@ -142,6 +162,7 @@ class AppRepository @Inject constructor(application: Application) {
         mDbDao.deleteProductItem(product)
     }
     fun readLastTransaction(): Int? = mDbDao.readLastTransaction()
+    fun readTotalTransactionRecord(idTransaction: Int?): Int? = mDbDao.readTotalTransactionRecord(idTransaction)
     fun readLastProduct(): Int? = mDbDao.readLastProduct()
 
 

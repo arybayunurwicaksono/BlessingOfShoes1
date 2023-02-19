@@ -17,7 +17,7 @@ data class  BalanceReport(
     @ColumnInfo(name = "totalBalance")
     var totalBalance: Int? = null,
 
-    @ColumnInfo(name = "CashBalance")
+    @ColumnInfo(name = "status")
     var status: String? = null,
 
     @ColumnInfo(name = "typePayment")

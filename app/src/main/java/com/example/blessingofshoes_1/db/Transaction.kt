@@ -31,6 +31,9 @@ data class Transaction(
     @ColumnInfo(name = "moneyChange")
     var moneyChange: Int? = null,
 
+    @ColumnInfo(name = "totalItem")
+    var totalItem: Int? = null,
+
     @ColumnInfo(name = "username")
     var username: String? = null,
 

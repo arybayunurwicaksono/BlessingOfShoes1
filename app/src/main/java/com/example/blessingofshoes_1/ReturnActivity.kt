@@ -11,9 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
-import com.example.blessingofshoes_1.databinding.ActivityDetailReportBinding
+import com.example.blessingofshoes_1.adapter.ReturnAdapter
 import com.example.blessingofshoes_1.databinding.ActivityReturnBinding
 import com.example.blessingofshoes_1.db.AppDb
+import com.example.blessingofshoes_1.utils.Preferences
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File

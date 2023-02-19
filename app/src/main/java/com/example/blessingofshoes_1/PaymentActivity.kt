@@ -1,33 +1,47 @@
 package com.example.blessingofshoes_1
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
-import android.widget.TextView
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.drawToBitmap
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
-import com.example.blessingofshoes_1.databinding.ActivityDetailProductBinding
+import com.example.blessingofshoes_1.adapter.PaymentAdapter
 import com.example.blessingofshoes_1.databinding.ActivityPaymentBinding
 import com.example.blessingofshoes_1.db.AppDb
+import com.example.blessingofshoes_1.db.BalanceReport
 import com.example.blessingofshoes_1.db.Cart
-import com.example.blessingofshoes_1.db.Product
 import com.example.blessingofshoes_1.db.Transaction
-import com.google.android.material.snackbar.Snackbar
+import com.example.blessingofshoes_1.utils.Constant
+import com.example.blessingofshoes_1.utils.Preferences
+import com.example.blessingofshoes_1.viemodel.AppViewModel
+import com.mazenrashed.printooth.Printooth
+import com.mazenrashed.printooth.data.printable.ImagePrintable
+import com.mazenrashed.printooth.data.printable.Printable
+import com.mazenrashed.printooth.data.printable.RawPrintable
+import com.mazenrashed.printooth.data.printable.TextPrintable
+import com.mazenrashed.printooth.data.printer.DefaultPrinter
+import com.mazenrashed.printooth.ui.ScanningActivity
+import com.mazenrashed.printooth.utilities.Printing
+import com.mazenrashed.printooth.utilities.PrintingCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import net.glxn.qrgen.android.QRCode
 import java.lang.Boolean.TRUE
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+
 @AndroidEntryPoint
 class PaymentActivity : AppCompatActivity() {
 
@@ -41,11 +55,20 @@ class PaymentActivity : AppCompatActivity() {
     lateinit var listCart : ArrayList<Cart>
     private val appDatabase by lazy { AppDb.getDatabase(this).dbDao() }
     private lateinit var rvCart: RecyclerView
+    private var printing : Printing? = null
+    lateinit var transactionReceipt : Cart
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        if (Printooth.hasPairedPrinter())
+            printing = Printooth.printer()
+
         _activityPaymentBinding = ActivityPaymentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
         sharedPref = Preferences(this)
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
@@ -144,6 +167,7 @@ class PaymentActivity : AppCompatActivity() {
                             var moneyChange = moneyReceived - cartTotal
                             val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
                             var onProcess : Boolean
+                            var sumTotalItem = appDatabase.sumTotalTransactionItem()
                             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
                             val currentDate = sdf.format(Date())
                             SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
@@ -154,58 +178,74 @@ class PaymentActivity : AppCompatActivity() {
                                 .setConfirmClickListener { sDialog ->
                                     lifecycleScope.launch {
                                         var typePayment = "Cash"
-                                        viewModel.insertTransaction(
-                                            Transaction(0, cartTotal, totalCartProfit, moneyReceived,
-                                                moneyChange, username, typePayment, currentDate))
-                                        onProcess = TRUE
-                                        if(onProcess == TRUE) {
-                                            var idTransaction = viewModel.readLastTransaction()!!.toInt()
-                                            viewModel.updateCartIdTransaction(applicationContext, idTransaction) {
-                                                viewModel.updateCartStatus(applicationContext, status){
-                                                    /*setRecyclerView()
-                                                    observeNotes()*/
+                                        viewModel.updateCashBalance(applicationContext, cartTotal) {
+                                            viewModel.insertTransaction(
+                                                Transaction(0, cartTotal, totalCartProfit, moneyReceived,
+                                                    moneyChange, sumTotalItem, username, typePayment, currentDate))
+                                            onProcess = TRUE
+                                            if(onProcess == TRUE) {
+                                                var idTransaction = viewModel.readLastTransaction()!!.toInt()
+                                                viewModel.updateCartIdTransaction(applicationContext, idTransaction) {
+                                                    viewModel.updateCartStatus(applicationContext, status){
+                                                        viewModel.insertBalanceReport(
+                                                            BalanceReport(
+                                                                0,
+                                                                cartTotal,
+                                                                "In",
+                                                                typePayment,
+                                                                "Transaction",
+                                                                username,
+                                                                currentDate
+                                                            )
+                                                        )
+                                                        var idTransaction = viewModel.readLastTransaction()!!.toInt()
+                                                        val intent = Intent(this@PaymentActivity, MainActivity::class.java)
+                                                        intent.putExtra("DATA_STATUS", "print")
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                                        startActivity(intent)
+                                                        /*setRecyclerView()
+                                                        observeNotes()*/
 
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                     sDialog.dismissWithAnimation()
-                                    SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                        .setTitleText("Transaction Succeed :)")
-                                        .setConfirmText("Ok")
-                                        .setConfirmClickListener { fDialog ->
-                                            val intent = Intent(this@PaymentActivity, MainActivity::class.java)
-                                            startActivity(intent)
-                                        }
-
                                 }
                                 .setCancelText("Digital")
                                 .setCancelButtonBackgroundColor(R.color.blue_600)
                                 .setCancelClickListener { pDialog ->
                                     var typePayment = "Digital"
-                                    viewModel.insertTransaction(
-                                        Transaction(0, cartTotal, totalCartProfit, moneyReceived,
-                                            moneyChange, username, typePayment, currentDate))
-                                    onProcess = TRUE
-                                    if(onProcess == TRUE) {
-                                        var idTransaction = viewModel.readLastTransaction()!!.toInt()
-                                        viewModel.updateCartIdTransaction(applicationContext, idTransaction) {
-                                            viewModel.updateCartStatus(applicationContext, status){
-                                                /*setRecyclerView()
-                                                observeNotes()*/
-                                                val intent = Intent(this@PaymentActivity, MainActivity::class.java)
-                                                startActivity(intent)
+                                    viewModel.updateDigitalBalance(applicationContext, cartTotal) {
+                                        viewModel.insertTransaction(
+                                            Transaction(0, cartTotal, totalCartProfit, moneyReceived,
+                                                moneyChange, sumTotalItem, username, typePayment, currentDate))
+                                        onProcess = TRUE
+                                        if(onProcess == TRUE) {
+                                            var idTransaction = viewModel.readLastTransaction()!!.toInt()
+                                            viewModel.updateCartIdTransaction(applicationContext, idTransaction) {
+                                                viewModel.updateCartStatus(applicationContext, status){
+                                                    viewModel.insertBalanceReport(
+                                                        BalanceReport(
+                                                            0,
+                                                            cartTotal,
+                                                            "In",
+                                                            typePayment,
+                                                            "Transaction",
+                                                            username,
+                                                            currentDate
+                                                        )
+                                                    )
+                                                    val intent = Intent(this@PaymentActivity, MainActivity::class.java)
+                                                    intent.putExtra("DATA_STATUS", "print")
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                                    startActivity(intent)
+                                                }
                                             }
                                         }
                                     }
                                     pDialog.dismissWithAnimation()
-                                    SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                        .setTitleText("Transaction Succeed :)")
-                                        .setConfirmText("Ok")
-                                        .setConfirmClickListener { fDialog ->
-                                            val intent = Intent(this@PaymentActivity, MainActivity::class.java)
-                                            startActivity(intent)
-                                        }
                                 }
                                 .show()
                         }

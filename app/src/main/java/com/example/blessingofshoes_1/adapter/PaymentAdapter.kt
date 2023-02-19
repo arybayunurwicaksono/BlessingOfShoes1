@@ -1,21 +1,14 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.adapter
 
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.blessingofshoes_1.RecyclerClickListener
 import com.example.blessingofshoes_1.databinding.ItemCartBinding
-import com.example.blessingofshoes_1.databinding.ItemProductSecondBinding
 import com.example.blessingofshoes_1.db.Cart
-import com.example.blessingofshoes_1.db.Product
 import java.text.NumberFormat
 import java.util.*
 

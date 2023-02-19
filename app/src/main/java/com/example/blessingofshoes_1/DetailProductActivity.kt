@@ -9,11 +9,13 @@ import androidx.core.view.drawToBitmap
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
 import com.example.blessingofshoes_1.databinding.ActivityDetailProductBinding
 import com.example.blessingofshoes_1.db.Cart
+import com.example.blessingofshoes_1.utils.Constant
+import com.example.blessingofshoes_1.utils.Preferences
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
@@ -84,7 +86,50 @@ class DetailProductActivity : AppCompatActivity() {
                 .load(it.productPhoto)
                 .fitCenter()
                 .into(binding.imageView)
-            /*idProduct = it.idProduct
+
+
+            // di comment
+
+
+            var extraPrice = (it.priceProduct!!).toInt()
+            var extraRealPrice = (it.realPriceProduct!!).toInt()
+            var totalPurchasesFinal = eTotal * extraRealPrice
+            var extraProfit = (it.profitProduct!!).toInt()
+            //val email = sharedPref.getString(Constant.PREF_EMAIL)
+            binding.tvItemTotal.setText(eTotal.toString())
+            binding.tvItemTotalProfit.setText(eProfit.toString())
+            binding.tvItemTotalPrice.setText(ePayment.toString())
+            binding.btnAddToCart.setOnClickListener {
+                Toast.makeText(this,totalItemPrice.toString(),Toast.LENGTH_SHORT)
+                lifecycleScope.launch {
+                    SweetAlertDialog(this@DetailProductActivity, SweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText("Attention")
+                        .setContentText("You sure to add this item to Cart?")
+                        .setConfirmText("Yes")
+                        .setConfirmClickListener { sDialog ->
+                            val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL)) //username belum muncul!
+                            val productPhoto = binding.imageView.drawToBitmap()
+                            viewModel.insertCart(Cart(0, eId, eName, extraPrice, eTotal, extraProfit, eProfit, ePayment, username, "onProgress", 0, productPhoto))
+                            viewModel.sumTotalPurchasesItem(eId, totalPurchasesFinal)
+                            viewModel.sumStockItem(eId, eTotal)
+                            sDialog.dismissWithAnimation()
+                            val navController = findNavController(R.id.bottom_nav)
+                            navController.navigate(R.id.action_global_test)
+                        }
+                        .show()
+
+
+                }
+
+
+            }
+
+
+        })
+    }
+}
+
+/*idProduct = it.idProduct
             var stockExist = it.stockProduct
             var priceDefault = it.priceProduct
             if (it.stockProduct!!.toInt() > 0){
@@ -129,40 +174,3 @@ class DetailProductActivity : AppCompatActivity() {
                     total = total - priceDefault.toString().toInt()
                 }
             }*/
-            var extraPrice = (it.priceProduct!!).toInt()
-            var extraRealPrice = (it.realPriceProduct!!).toInt()
-            var totalPurchasesFinal = eTotal * extraRealPrice
-            var extraProfit = (it.profitProduct!!).toInt()
-            //val email = sharedPref.getString(Constant.PREF_EMAIL)
-            binding.tvItemTotal.setText(eTotal.toString())
-            binding.tvItemTotalProfit.setText(eProfit.toString())
-            binding.tvItemTotalPrice.setText(ePayment.toString())
-            binding.btnAddToCart.setOnClickListener {
-                Toast.makeText(this,totalItemPrice.toString(),Toast.LENGTH_SHORT)
-                lifecycleScope.launch {
-                    SweetAlertDialog(this@DetailProductActivity, SweetAlertDialog.SUCCESS_TYPE)
-                        .setTitleText("Attention")
-                        .setContentText("You sure to add this item to Cart?")
-                        .setConfirmText("Yes")
-                        .setConfirmClickListener { sDialog ->
-                            val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL)) //username belum muncul!
-                            val productPhoto = binding.imageView.drawToBitmap()
-                            viewModel.insertCart(Cart(0, eId, eName, extraPrice, eTotal, extraProfit, eProfit, ePayment, username, "onProgress", 0, productPhoto))
-                            viewModel.sumTotalPurchasesItem(eId, totalPurchasesFinal)
-                            viewModel.sumStockItem(eId, eTotal)
-                            sDialog.dismissWithAnimation()
-                            val navController = findNavController(R.id.bottom_nav)
-                            navController.navigate(R.id.action_global_test)
-                        }
-                        .show()
-
-
-                }
-
-
-            }
-
-
-        })
-    }
-}

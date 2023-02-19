@@ -1,28 +1,24 @@
 package com.example.blessingofshoes_1
 
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
-import com.example.blessingofshoes_1.authentication.RegisterActivity
+import com.example.blessingofshoes_1.adapter.ProductAdapter
 import com.example.blessingofshoes_1.databinding.FragmentProductBinding
 import com.example.blessingofshoes_1.db.AppDb
 import com.example.blessingofshoes_1.db.Product
+import com.example.blessingofshoes_1.viemodel.AppViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -44,18 +40,19 @@ class ProductFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_product, container, false)
 
-        var btnAdd = view.findViewById<FloatingActionButton>(R.id.btn_add)
-        btnAdd.setOnClickListener{
-            val intent = Intent(requireContext(), AddProductActivity::class.java)
-            startActivity(intent)
-        }
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        var btnAdd = view.findViewById<FloatingActionButton>(R.id.btn_add)
+        btnAdd.setOnClickListener{
+            findNavController().navigate(R.id.action_productFragment_to_add_product_fragment)
+//            val intent = Intent(requireContext(), AddProductActivity::class.java)
+//            startActivity(intent)
+        }
 
         observeNotes()
         productList = ArrayList()

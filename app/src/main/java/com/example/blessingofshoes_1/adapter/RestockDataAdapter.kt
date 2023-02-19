@@ -1,4 +1,4 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.adapter
 
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.blessingofshoes_1.R
+import com.example.blessingofshoes_1.RecyclerClickListener
 import com.example.blessingofshoes_1.databinding.ItemRestockBinding
 import com.example.blessingofshoes_1.db.Restock
 import java.text.NumberFormat

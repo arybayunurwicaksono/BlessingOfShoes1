@@ -33,6 +33,9 @@ interface DbDao {
     fun insertProduct(product: Product)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertAccounting(accounting: Accounting)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertBalance(balance: Balance)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -43,6 +46,9 @@ interface DbDao {
 
     @Query("SELECT * FROM product")
     fun getAllProduct() : LiveData<List<Product>>
+
+    @Query("SELECT * FROM accounting")
+    fun getAllAccounting() : LiveData<List<Accounting>>
 
     @Query("SELECT * FROM cart")
     fun getAllCartItem() : Flow<List<Cart>>
@@ -73,6 +79,8 @@ interface DbDao {
     @Query("SELECT * FROM product WHERE idProduct LIKE :idProduct")
     fun readProductItem(idProduct: Int?): LiveData<Product>
 
+    @Query("SELECT * FROM accounting WHERE dateAccounting LIKE :time")
+    fun readDetailMonthlyAccounting(time: String?): LiveData<Accounting>
 
     //UPDATE Products set Price = (SELECT SUM(Price-7) FROM Products WHERE ProductId = 7) WHERE ProductID = 7
     @Query("UPDATE Product set stockProduct = (SELECT SUM(stockProduct- :totalItem) FROM product WHERE idProduct LIKE :idProduct) WHERE idProduct = :idProduct")
@@ -96,7 +104,7 @@ interface DbDao {
     @Query("SELECT SUM(totalTransaction) FROM `transaction`")
     fun sumTotalTransaction(): Int?
 
-    @Query("SELECT SUM(profitItem) FROM cart WHERE status = 'onProgress'")
+    @Query("SELECT SUM(`totalProfit `) FROM cart WHERE status = 'onProgress'")
     fun sumTotalProfit(): Int?
 
     @Query("SELECT SUM(profitItem) FROM cart WHERE status = 'complete'")
@@ -121,11 +129,17 @@ interface DbDao {
     @Update
     fun updateProductItem(data: Product)
 
+    @Update
+    fun updateMonthlyAccounting(data: Accounting)
+
     @Delete
     fun deleteProductItem(data: Product)
 
     @Query("DELETE FROM product WHERE idProduct LIKE :idProduct")
     fun deleteProduct(idProduct: Int?)
+
+    @Query("DELETE FROM accounting WHERE idAccounting LIKE :idAccounting")
+    fun deleteAccounting(idAccounting: Int?)
 
     @Query("DELETE FROM cart WHERE idItem LIKE :idItem")
     fun deleteCart(idItem: Int?)
@@ -171,4 +185,85 @@ interface DbDao {
 
     @Query("SELECT * FROM balanceReport")
     fun getBalanceReportData() : Flow<List<BalanceReport>>
+
+    //RECEIPT
+    @Query("SELECT COUNT(idTransaction) FROM cart WHERE idTransaction LIKE :idTransaction")
+    fun readTotalTransactionRecord(idTransaction: Int?) : Int
+
+    @Query("SELECT nameItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    fun readNameItemReceipt(idTransaction: Int?, recordPosition: Int?) : String
+
+    @Query("SELECT totalItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    fun readTotalItemReceipt(idTransaction: Int?, recordPosition: Int?) : Int
+
+    @Query("SELECT priceItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    fun readPriceItemReceipt(idTransaction: Int?, recordPosition: Int?) : Int
+
+    @Query("SELECT totalpayment FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    fun readTotalPaymentReceipt(idTransaction: Int?, recordPosition: Int?) : Int
+
+    @Query("SELECT totalTransaction FROM `transaction` WHERE idTransaction LIKE :idTransaction")
+    fun readTotalTransactionPayment(idTransaction: Int?) : Int
+
+    @Query("SELECT moneyReceived FROM `transaction` WHERE idTransaction LIKE :idTransaction")
+    fun readTotalReceivedPayment(idTransaction: Int?) : Int
+
+    @Query("SELECT moneyChange FROM `transaction` WHERE idTransaction LIKE :idTransaction")
+    fun readTotalChangePayment(idTransaction: Int?) : Int
+
+    //accounting
+    @Query("SELECT sum(profitTransaction) FROM 'transaction' WHERE transactionDate LIKE :time")
+    fun sumTotalProfitAcc(time: String?): Int?
+
+    @Query("SELECT COUNT(idProduct) FROM product")
+    fun validateCountProduct(): Int?
+
+    @Query("SELECT COUNT(idBalanceReport) FROM balanceReport")
+    fun validateCountBalance(): Int?
+
+    @Query("SELECT COUNT(dateAccounting) FROM accounting WHERE dateAccounting LIKE :datePicker")
+    fun validateAccounting(datePicker : String?): Int?
+
+    @Query("SELECT COUNT(idTransaction) FROM `transaction` WHERE transactionDate LIKE :datePicker")
+    fun validateTransaction(datePicker : String?): Int?
+
+    @Query("SELECT COUNT(idRestock) FROM `restock` WHERE restockDate LIKE :datePicker")
+    fun validateRestock(datePicker : String?): Int?
+
+    @Query("SELECT COUNT(idReturn) FROM `return` WHERE returnDate LIKE :datePicker")
+    fun validateReturn(datePicker : String?): Int?
+
+    @Query("SELECT sum(totalPurchases) FROM product")
+    fun readTotalStockWorth(): Int?
+
+    @Query("SELECT sum(stockProduct) FROM product")
+    fun readTotalStock(): Int?
+
+    @Query("SELECT SUM(totalBalance) FROM balanceReport WHERE reportTag  LIKE 'Capital' AND timeAdded LIKE '%' ||  :timeAdded ||  '%'")
+    fun sumTotalInvest(timeAdded: String?): Int?
+
+    @Query("SELECT SUM(totalBalance) FROM balanceReport WHERE status  LIKE 'Out' AND timeAdded LIKE :timeAdded ")
+    fun sumTotalBalanceOut(timeAdded: String?): Int?
+
+    @Query("SELECT SUM(totalTransaction) FROM `transaction` WHERE transactionDate LIKE :time ")
+    fun sumTotalTransactionAcc(time: String?): Int?
+
+    @Query("SELECT SUM(totalItem) FROM `cart` WHERE status LIKE 'onProgress' ")
+    fun sumTotalTransactionItem(): Int?
+
+    @Query("SELECT SUM(totalItem) FROM `transaction` WHERE transactionDate LIKE :time  ")
+    fun readTotalTransactionItem(time: String?): Int?
+
+    @Query("SELECT SUM(totalPurchases) FROM `restock` WHERE restockDate LIKE :time ")
+    fun sumTotalPurchases(time: String?): Int?
+
+    @Query("SELECT SUM(stockAdded) FROM `restock` WHERE restockDate LIKE :time ")
+    fun sumTotalStockAdded(time: String?): Int?
+
+    @Query("SELECT SUM(totalRefund) FROM `return` WHERE returnDate LIKE :time ")
+    fun sumTotalRefund(time: String?): Int?
+
+    @Query("SELECT SUM(totalItem) FROM `return` WHERE returnDate LIKE :time ")
+    fun sumTotalRefundItem(time: String?): Int?
+
 }

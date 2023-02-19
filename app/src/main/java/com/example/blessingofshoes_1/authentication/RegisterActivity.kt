@@ -27,6 +27,10 @@ import com.example.blessingofshoes_1.databinding.ActivityRegisterBinding
 import com.example.blessingofshoes_1.db.AppDb
 import com.example.blessingofshoes_1.db.Balance
 import com.example.blessingofshoes_1.db.Users
+import com.example.blessingofshoes_1.utils.createCustomTempFile
+import com.example.blessingofshoes_1.utils.uriToFile
+import com.example.blessingofshoes_1.viemodel.AppViewModel
+import com.example.blessingofshoes_1.viemodel.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import java.io.ByteArrayOutputStream
 import java.io.File

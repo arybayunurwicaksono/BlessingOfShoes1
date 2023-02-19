@@ -1,4 +1,4 @@
-package com.example.blessingofshoes_1
+package com.example.blessingofshoes_1.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.blessingofshoes_1.databinding.ItemDetailReportBinding
+import com.example.blessingofshoes_1.RecyclerClickListener
 import com.example.blessingofshoes_1.databinding.ItemReturnBinding
 import com.example.blessingofshoes_1.db.Cart
 import java.text.NumberFormat
